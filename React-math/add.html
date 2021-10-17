@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Addition Game</title>
+    <style>
+        .incorrect{
+            color:red;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+
+    class WIN extends React.Component{
+        constructor(props){
+            super(props);
+            
+        }
+
+        render(){
+        return(
+            <p>Congrats {this.props.name} you Win!</p>
+        );
+    }
+
+    }
+
+        class Hello extends React.Component {
+            constructor(props){
+                super(props);
+                this.state = {
+                num1: Math.ceil(Math.random() * 10),
+                num2: Math.ceil(Math.random() * 10),
+                score: 0,
+                response: "",
+                isincorrect:false
+                }
+            }
+
+            render(){
+            if(this.state.score > 5){
+                return this.renderWin();
+                
+            }else{
+                return this.renderQuestion();
+                
+            }
+        }
+
+
+            renderQuestion() {
+                return (
+                <div>
+                <p> {this.state.num1} + {this.state.num2} </p>
+                <input onKeyPress={this.checkAnswer}  onChange = { this.updateResponse } value={this.state.response} />
+                <p className={this.state.isincorrect ? "" : "incorrect"} >Answer is incorrect!</p>
+                <p> Current Score: { this.state.score } </p>
+                </div>
+                );
+            }
+
+
+         
+
+            renderWin () {
+                return (
+                    <div>
+                        <WIN name={this.props.name} />
+                    </div>
+                );
+            }
+
+            
+
+            
+            updateResponse = (event)=>{
+                this.setState({
+                    response:event.target.value
+                });
+            }
+
+
+            checkAnswer = (event)=>{
+                if(event.key === "Enter"){
+                    const answer = parseInt(this.state.response);
+                    if(answer === this.state.num1 + this.state.num2){
+                        this.setState(state =>({
+                            num1:Math.ceil(Math.random() * 10),
+                            num2:Math.ceil(Math.random() * 10),
+                            score:state.score+1,
+                            response:"",
+                            isincorrect:false
+                        }));
+
+                    }else{
+                        this.setState({
+                            response:"",
+                            isincorrect:true
+                        });
+                    }
+
+                }
+
+            }
+
+           
+     }
+        
+
+
+
+
+     class App extends React.Component{
+        render(){
+                return(
+                <div>
+                    <Hello name="amit" />
+                    <Hello name="kunal" />
+
+                </div>
+                );
+            }
+     }
+    
+    
+     
+        
+        ReactDOM.render(
+        <App />, document.querySelector('#app'))
+    </script>
+</body>
+
+</html>
