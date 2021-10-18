@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>FlashCard</title>
+    <style>
+        table, tr,td, th{
+            border:1px solid black;
+        }
+        table{
+            border-collapse: collapse;
+            width: 80%;
+            margin: auto;
+        }
+
+        td:nth-child(3){
+            text-align: center;
+        }
+
+        tr,td, th{
+            padding: 10px 15px;
+        }
+
+        .switch-btn{
+            margin-top: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+
+            class AddCards extends React.Component{
+                constructor(props){
+                    super(props);
+                }
+
+                render(){
+                    return(
+                        <div>
+                        <input onChange={this.props.changeState} name="front" value = {this.props.front} placeholder ="This is the fornt!" />    
+                        <input onChange={this.props.changeState} name="back" value = {this.props.back} placeholder ="This is the Back!" />    
+                        <button onClick={this.props.addCard} >Add Card</button>        
+                        </div>
+                    );
+                }
+            }
+
+            class EditorMode extends React.Component{
+                constructor(props){
+                    super(props);
+                }
+
+                render(){
+                        
+                    let tableRow = this.props.cards.map((card,i)=>{
+                        return(
+                            <tr key={i}>
+                                <td>{card.front}</td>
+                                <td>{card.back}</td>
+                                <td>
+                                    <button>Delete</button>
+                                </td>
+                            </tr>
+                        );
+                    })
+
+                    return(
+                        <div>
+                        <h1>Editor Mode !</h1>
+                        <table>
+                            <tr>
+                            <th>Fornt</th>
+                            <th>Back</th>
+                            <th>Delete</th>
+                            </tr>
+
+                            {tableRow}
+
+                        </table>
+                        <hr/>
+                        <button className={"switch-btn"} onClick = { this.props.switchMode }>Switch to view mode</button>
+                        </div>
+                    );
+                }
+            }
+            
+
+
+            class ViewMode extends React.Component{
+                constructor(props){
+                    super(props);
+
+                }
+
+                render(){
+                    return(
+
+                    <div>
+                        <h1> View Mode ! </h1>
+                        
+                        
+
+                        <hr/>
+                        <button onClick = { this.props.switchMode }>Switch to edit mode</button>
+                    </div>
+
+                    );
+                }
+            }
+
+            class App extends React.Component{
+                constructor(props){
+                    super(props);
+                    this.state = {
+                        isEdit: true,
+                        cards:[{"front":"one","back":"two"},{"front":"one","back":"two"},{"front":"one","back":"two"}]
+                    }
+
+                }
+
+                render(){
+                    
+                    if(this.state.isEdit){
+                        return(
+                            <div>
+                        <EditorMode
+                            switchMode = {this.modeHandler}
+                            cards = {this.state.cards}
+                            
+                        />
+                        <br/>
+                        <AddCards 
+                            front={this.state.front} 
+                            back={this.state.back}
+                            addCard={this.addCard}
+                            changeState = {this.changeState}
+                        />
+                        </div>
+                        );
+                    }else{
+                        return(
+                            <div>
+                        <ViewMode 
+                            switchMode = {this.modeHandler} 
+                            cards = {this.state.cards} 
+                        />
+                        <br/>
+                        <AddCards 
+                            front={this.state.front} 
+                            back={this.state.back}
+                            addCard={this.addCard}
+                            changeState = {this.changeState}
+                        />
+
+                        <br/>
+
+                            </div>
+                        );
+                    }     
+                }
+
+                changeState = (event) => {
+                    this.setState(state=>({
+                        [event.target.name]:event.target.value
+
+                    }));
+                }                
+
+                addCard = () =>{
+                    this.setState(state =>({
+                    cards:[...state.cards,{"front":this.state.front,"back":this.state.back}]
+                    }));
+                }
+
+                modeHandler = () =>{
+                    this.setState(state =>({
+                        isEdit: !state.isEdit
+                    }));
+                }
+            }
+
+            ReactDOM.render(<App />, document.getElementById('app'));
+
+    </script>
+</body>
+</html>
